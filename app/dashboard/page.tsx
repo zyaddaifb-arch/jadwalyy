@@ -71,10 +71,6 @@ export default function DashboardPage() {
   const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
   const paginatedGroups = filteredGroups.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
-
   return (
     <div className="p-8">
       {/* Top Bar */}
@@ -88,7 +84,10 @@ export default function DashboardPage() {
               type="text" 
               placeholder="بحث عن طالب أو مجموعة..." 
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="peer w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pr-11 focus:pr-4 pl-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none shadow-sm hover:border-slate-300 dark:hover:border-slate-600"
             />
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl peer-focus:opacity-0 peer-focus:invisible pointer-events-none transition-all duration-200">search</span>
