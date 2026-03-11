@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default async function GroupBookingDetails({ params }: { params: Promise<{ teacherId: string, groupId: string }> }) {
   const resolvedParams = await params;
@@ -83,7 +84,13 @@ export default async function GroupBookingDetails({ params }: { params: Promise<
 
           {/* Teacher Info */}
           <div className="flex items-center gap-4 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 mb-10 bg-white dark:bg-slate-800">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoZhlc6ZhtncXZYX5__tXjJFO6F7bXWwY7OTB67tJxdWWF4mxSU2vgFAVA1RHKKGeBylZ5M2MFfd73X5SPsG-sx6KuspesT8ebHfhfH91SdtEVaa6X8LGmM7xbwFNaC9s2LW16m_Wqe-umVr4aAoEq170O8shNo5QvjH6fuQ1ZzceKC0Cod63xOPIcpDJkLn9NdtpikOFdo_vyy2kDr765nmdah4Q7TobIvN5LIRj2LeAAouSaM99FGse5uM5e9OMs5SncAUO6LmM" alt="Teacher" className="w-14 h-14 rounded-full object-cover border-2 border-slate-100 dark:border-slate-700" />
+            <Image 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoZhlc6ZhtncXZYX5__tXjJFO6F7bXWwY7OTB67tJxdWWF4mxSU2vgFAVA1RHKKGeBylZ5M2MFfd73X5SPsG-sx6KuspesT8ebHfhfH91SdtEVaa6X8LGmM7xbwFNaC9s2LW16m_Wqe-umVr4aAoEq170O8shNo5QvjH6fuQ1ZzceKC0Cod63xOPIcpDJkLn9NdtpikOFdo_vyy2kDr765nmdah4Q7TobIvN5LIRj2LeAAouSaM99FGse5uM5e9OMs5SncAUO6LmM" 
+              alt="Teacher" 
+              width={56}
+              height={56}
+              className="w-14 h-14 rounded-full object-cover border-2 border-slate-100 dark:border-slate-700" 
+            />
             <div>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">مقدمة بواسطة</p>
               <p className="font-bold text-slate-900 dark:text-white text-lg">أ. أحمد العتيبي</p>
