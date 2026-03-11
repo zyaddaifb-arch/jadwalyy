@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export function Footer() {
   return (
     <footer className="bg-white dark:bg-navy-950 border-t border-slate-200 dark:border-navy-800 pt-16 pb-8">
@@ -14,10 +16,20 @@ export function Footer() {
               منصة تساعد المدرسين على تنظيم المجموعات وحجوزات الطلاب بسهولة واحترافية. نحن هنا لنوفر وقتك ونقلل مجهودك الإداري.
             </p>
             <div className="flex gap-4">
-              <a className="w-10 h-10 rounded-full bg-slate-100 dark:bg-navy-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">
-                <span className="material-symbols-outlined text-xl">share</span>
+              <a
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-navy-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+                href="https://wa.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="واتساب"
+              >
+                <span className="material-symbols-outlined text-xl">chat</span>
               </a>
-              <a className="w-10 h-10 rounded-full bg-slate-100 dark:bg-navy-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+              <a
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-navy-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-primary transition-colors"
+                href="mailto:support@jadwalyy.com"
+                title="البريد الإلكتروني"
+              >
                 <span className="material-symbols-outlined text-xl">mail</span>
               </a>
             </div>
@@ -25,24 +37,24 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-slate-900 dark:text-white mb-6">روابط سريعة</h4>
             <ul className="space-y-4 text-slate-500 dark:text-slate-400">
-              <li><a className="hover:text-primary transition-colors" href="#">عن المنصة</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">المميزات</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">الأسعار</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">المدونة</a></li>
+              <li><a className="hover:text-primary transition-colors" href="#features">المميزات</a></li>
+              <li><a className="hover:text-primary transition-colors" href="#how-it-works">كيف يعمل</a></li>
+              <li><a className="hover:text-primary transition-colors" href="#benefits">لماذا جدولي</a></li>
+              <li><Link className="hover:text-primary transition-colors" href="/register">ابدأ مجانًا</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold text-slate-900 dark:text-white mb-6">الدعم والمساعدة</h4>
             <ul className="space-y-4 text-slate-500 dark:text-slate-400">
-              <li><a className="hover:text-primary transition-colors" href="#">مركز المساعدة</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">تواصل معنا</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">الشروط والأحكام</a></li>
-              <li><a className="hover:text-primary transition-colors" href="#">سياسة الخصوصية</a></li>
+              <li><Link className="hover:text-primary transition-colors" href="/login">تسجيل الدخول</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="/register">إنشاء حساب</Link></li>
+              <li><a className="hover:text-primary transition-colors" href="mailto:support@jadwalyy.com">تواصل معنا</a></li>
+              <li><Link className="hover:text-primary transition-colors" href="/forgot-password">نسيت كلمة المرور</Link></li>
             </ul>
           </div>
         </div>
         <div className="border-t border-slate-100 dark:border-navy-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-slate-500 text-sm">© 2024 جدولي. جميع الحقوق محفوظة.</p>
+          <p className="text-slate-500 text-sm">© 2025 جدولي. جميع الحقوق محفوظة.</p>
           <div className="flex items-center gap-2 text-slate-400 text-xs">
             <span>صنع بكل حب لدعم التعليم في العالم العربي</span>
             <span className="material-symbols-outlined text-red-500 text-sm">favorite</span>

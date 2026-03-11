@@ -1,0 +1,844 @@
+[
+  {
+    "id": "TC001",
+    "title": "Login succeeds with valid credentials and Remember Me checked",
+    "description": "Verifies a user can sign in with valid email/password, optionally enabling Remember Me, and sees a success confirmation.",
+    "category": "User Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Remember me\" checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"successful\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Login succeeds with valid credentials without Remember Me",
+    "description": "Verifies a user can sign in with valid email/password without using the Remember Me option and sees a success confirmation.",
+    "category": "User Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"successful\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Invalid credentials show an error message",
+    "description": "Verifies an incorrect email/password combination is rejected and an invalid-credentials error is shown.",
+    "category": "User Login",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"nonexistent.user+e2e@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"WrongPassword123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Submitting with empty email shows validation/required feedback",
+    "description": "Verifies the form prevents submission or shows visible feedback when email is missing.",
+    "category": "User Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"email\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Submitting with empty password shows validation/required feedback",
+    "description": "Verifies the form prevents submission or shows visible feedback when password is missing.",
+    "category": "User Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"password\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Invalid email format is rejected",
+    "description": "Verifies the email field rejects an improperly formatted email and shows visible feedback.",
+    "category": "User Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Login\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not-an-email\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"SomePassword123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"email\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Remember Me can be toggled on and off before submitting",
+    "description": "Verifies the Remember Me checkbox responds to user interaction and does not block submission.",
+    "category": "User Login",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Remember\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Remember me\" checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Remember me\" checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"successful\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Error message clears or is not shown after successful login attempt",
+    "description": "Verifies that after a failed attempt, a subsequent valid login results in a visible success confirmation (and does not remain stuck on the error state).",
+    "category": "User Login",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Type \"nonexistent.user+e2e@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"WrongPassword123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_USER}}\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"{{LOGIN_PASSWORD}}\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Login\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"successful\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Successful registration with all required fields and terms accepted",
+    "description": "Verifies a user can register successfully by providing valid details and accepting the terms.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Register\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"testsprite.user+reg1@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Math\" from the subject dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ValidPass123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the terms agreement checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"account created\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Invalid email format and missing phone with terms unchecked shows validation errors",
+    "description": "Verifies validation errors appear when the email is invalid, phone is missing, and terms are not accepted.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not-an-email\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Math\" from the subject dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ValidPass123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"terms\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Submitting an empty registration form shows required field errors",
+    "description": "Verifies required-field validation triggers when the form is submitted with no inputs.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Register\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"required\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"terms\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Terms must be accepted to register even with otherwise valid inputs",
+    "description": "Verifies the user cannot register unless the terms agreement checkbox is checked.",
+    "category": "User Registration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"testsprite.user+reg2@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5552223333\" into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Science\" from the subject dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ValidPass123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"terms\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Subject selection is required to register",
+    "description": "Verifies the user cannot submit successfully without selecting a subject.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"testsprite.user+reg3@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5557778888\" into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ValidPass123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the terms agreement checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"subject\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Password required validation appears when password is missing",
+    "description": "Verifies an error is shown when attempting to register without a password.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"testsprite.user+reg4@example.com\" into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559990000\" into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"English\" from the subject dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on the terms agreement checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"password\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Email required validation appears when email is missing",
+    "description": "Verifies an error is shown when attempting to register without an email.",
+    "category": "User Registration",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test User\" into the full name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551112222\" into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"History\" from the subject dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ValidPass123!\" into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the terms agreement checkbox"
+      },
+      {
+        "type": "action",
+        "description": "Click on the Register button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"email\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Successful student booking submission shows confirmation",
+    "description": "Verifies a student can submit the booking form with valid inputs and sees a confirmation message.",
+    "category": "Student Booking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Student A\" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"confirmation\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Invalid student phone number shows validation error",
+    "description": "Verifies the form blocks submission and shows an error when the student phone number is invalid.",
+    "category": "Student Booking",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Student Phone Invalid\" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"abc\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Required field validation when student name is missing",
+    "description": "Verifies the form shows an error and does not confirm booking when the student name field is left empty.",
+    "category": "Student Booking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Required field validation when school is missing",
+    "description": "Verifies the form shows an error and does not confirm booking when the school field is left empty.",
+    "category": "Student Booking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Student Missing School\" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Invalid parent phone number shows validation error",
+    "description": "Verifies the form blocks submission and shows an error when the parent phone number is invalid.",
+    "category": "Student Booking",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Student Parent Phone Invalid\" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"12\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Form remains available after an error so the user can try again",
+    "description": "Verifies that after an invalid submission error, the booking form is still usable and the submit button remains visible.",
+    "category": "Student Booking",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Student Retry\" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"invalid\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Whitespace-only student name is rejected",
+    "description": "Verifies the form shows an error when the student name contains only spaces.",
+    "category": "Student Booking",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /test-teacher/test-group/book"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Submit booking\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"     \" into the student name input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test School\" into the school input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5551234567\" into the student phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"5559876543\" into the parent phone input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the Submit booking button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"error\" is visible"
+      }
+    ]
+  }
+]

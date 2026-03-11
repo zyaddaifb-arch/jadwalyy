@@ -1,0 +1,71 @@
+version: "2"
+type: frontend
+tech_stack:
+  - nextjs
+  - react
+  - tailwindcss
+  - supabase
+routes:
+  - path: /login
+    file: app/login/page.tsx
+    auth_required: false
+    description: User login page
+  - path: /register
+    file: app/register/page.tsx
+    auth_required: false
+    description: User registration page
+  - path: /:teacherId/:groupId/book
+    file: app/[teacherId]/[groupId]/book/booking-form.tsx
+    auth_required: false
+    description: Student booking form for a group
+features:
+  - name: User Login
+    description: Login with email and password credentials
+    files:
+      - app/login/page.tsx
+    entry_route: /login
+    user_interactions:
+      - Fill email input field
+      - Fill password input field
+      - Check remember me box
+      - Click Login button to submit
+      - See error message on invalid credentials
+    api_calls:
+      - method: POST
+        endpoint: supabase.auth.signInWithPassword
+    auth_required: false
+  - name: User Registration
+    description: Register new user with full name, email, phone, subject, and password
+    files:
+      - app/register/page.tsx
+    entry_route: /register
+    user_interactions:
+      - Fill full name input field
+      - Fill email input field
+      - Fill phone input field
+      - Select subject from dropdown
+      - Fill password input field
+      - Check terms agreement checkbox
+      - Click Register button to submit
+      - See error message on invalid inputs
+    api_calls:
+      - method: POST
+        endpoint: supabase.auth.signUp
+    auth_required: false
+  - name: Student Booking
+    description: Book a student into a group
+    files:
+      - app/[teacherId]/[groupId]/book/booking-form.tsx
+    entry_route: /7d6943e9-82d3-46dc-a4e3-ab9c35934262/57ec9b51-a4a5-4ac9-ae17-2dc3368061c3/book
+    user_interactions:
+      - Fill student name input field
+      - Fill school input field
+      - Fill student phone input field
+      - Fill parent phone input field
+      - Click Submit booking button
+      - See error message if inputs are invalid or duplicate booking exists
+    api_calls:
+      - method: POST
+        endpoint: supabase.from('bookings').insert
+    auth_required: false
+known_limitations: []

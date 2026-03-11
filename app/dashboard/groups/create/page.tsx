@@ -1,164 +1,282 @@
-'use client';
+"use client";
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+
+import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 
 export default function CreateGroupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form states
+  const [name, setName] = useState("");
+  const [subject, setSubject] = useState("");
+  const [groupId, setGroupId] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [duration, setDuration] = useState("60");
+  const [seats, setSeats] = useState("25");
+  const [status, setStatus] = useState("نشط");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+    setError(null);
+
+    if (!name.trim()) {
+      setError('يرجى إدخال اسم المجموعة');
       setIsSubmitting(false);
+      return;
+    }
+
+    if (!subject) {
+      setError('يرجى اختيار المادة الدراسية');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const seatsNum = parseInt(seats);
+    if (isNaN(seatsNum) || seatsNum <= 0) {
+      setError('يرجى إدخال عدد مقاعد صحيح (أكبر من صفر)');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('groups')
+        .insert([
+          {
+            teacher_id: user.id,
+            name,
+            subject,
+            time: `${date} ${time}`,
+            seats_total: parseInt(seats),
+            status: status === "نشط" ? "نشط" : "مغلق",
+            description: notes,
+          }
+        ]);
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
-    }, 1500);
+      setTimeout(() => {
+        setShowToast(false);
+        router.push('/dashboard');
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "حدث خطأ غير متوقع");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="mx-auto px-6 py-8 max-w-4xl w-full">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">إنشاء مجموعة جديدة</h2>
-          <p className="text-slate-500 mt-1">قم بإدخال بيانات المجموعة ليتمكن الطلاب من الحجز بسهولة</p>
-        </div>
-        <Link href="/dashboard/groups" className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm w-fit">
-          <span className="material-symbols-outlined text-lg">arrow_forward</span>
-          <span>العودة إلى المجموعات</span>
+    <div className="mx-auto px-10 py-12 max-w-5xl w-full">
+      <DashboardHeader
+        title="إنشاء مجموعة جديدة"
+        description="أضف تفاصيل الجلسة الدراسية لتنظيم عملية الحجز لطلابك."
+      >
+        <Link href="/dashboard/groups" className="bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-black text-sm flex items-center gap-2 hover:bg-slate-50 transition-all active:scale-95 group whitespace-nowrap">
+          <span className="material-symbols-outlined text-xl transition-transform group-hover:translate-x-1">arrow_forward</span>
+          <span>العودة للمجموعات</span>
         </Link>
-      </div>
+      </DashboardHeader>
 
       {/* Form Card */}
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-        {/* Section 1: Basic Info */}
-        <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary">info</span>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">معلومات المجموعة</h3>
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+        {error && (
+          <div className="m-8 p-6 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-3xl flex items-center gap-4 text-red-600 dark:text-red-400">
+            <span className="material-symbols-outlined">error</span>
+            <p className="font-bold text-sm">حدث خطأ: {error}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">اسم المجموعة</label>
-              <input required type="text" placeholder="مثال: مجموعة التفوق 1" className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5" />
-              <p className="text-xs text-slate-400 mt-1">(مثلاً: مجموعة المراجعة النهائية - ليلة الامتحان)</p>
+        )}
+        {/* Section 1: Basic Info */}
+        <div className="p-10 border-b border-slate-50 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+                <span className="material-symbols-outlined font-light">info</span>
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">المعلومات الأساسية</h3>
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">المادة</label>
-              <select required className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5">
-                <option value="">اختر المادة</option>
-                <option value="math">الرياضيات</option>
-                <option value="arabic">اللغة العربية</option>
-                <option value="physics">الفيزياء</option>
-                <option value="chemistry">الكيمياء</option>
-                <option value="biology">الأحياء</option>
-                <option value="english">اللغة الإنجليزية</option>
-              </select>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">الخطوة 1 من 3</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">اسم المجموعة</label>
+              <input required type="text" value={name} onChange={e => setName(e.target.value)} placeholder="مثال: مراجعة ليلة الامتحان" className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-700 dark:text-slate-200" />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">رقم المجموعة</label>
-              <input type="text" placeholder="مثال: MATH-101" className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5" />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">المادة الدراسية</label>
+              <div className="relative">
+                <select required value={subject} onChange={e => setSubject(e.target.value)} className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200 appearance-none">
+                  <option value="">اختر المادة</option>
+                  <option value="الرياضيات">الرياضيات</option>
+                  <option value="اللغة العربية">اللغة العربية</option>
+                  <option value="الفيزياء">الفيزياء</option>
+                  <option value="الكيمياء">الكيمياء</option>
+                  <option value="الأحياء">الأحياء</option>
+                  <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+                </select>
+                <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">رقم المجموعة (اختياري)</label>
+              <input type="text" value={groupId} onChange={e => setGroupId(e.target.value)} placeholder="MATH-101" className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-700 dark:text-slate-200" />
             </div>
           </div>
         </div>
 
         {/* Section 2: Timing */}
-        <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary">schedule</span>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">موعد الدرس</h3>
+        <div className="p-10 border-b border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/20">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center">
+                <span className="material-symbols-outlined font-light">schedule</span>
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">الجدول الزمني</h3>
+            </div>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">الخطوة 2 من 3</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">التاريخ</label>
-              <input required type="date" className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">تاريخ الحصة</label>
+              <input required type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200" />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">الوقت</label>
-              <input required type="time" className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5" />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">وقت البدء</label>
+              <input required type="time" value={time} onChange={e => setTime(e.target.value)} className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200" />
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">مدة الحصة</label>
-              <select className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5">
-                <option value="60">60 دقيقة</option>
-                <option value="90">90 دقيقة</option>
-                <option value="120">120 دقيقة</option>
-              </select>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">مدة الدرس</label>
+              <div className="relative">
+                <select value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200 appearance-none">
+                  <option value="60">60 دقيقة (ساعة واحدة)</option>
+                  <option value="90">90 دقيقة (ساعة ونصف)</option>
+                  <option value="120">120 دقيقة (ساعتان)</option>
+                  <option value="180">180 دقيقة (3 ساعات)</option>
+                </select>
+                <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Section 3: Seats and Status */}
-        <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary">event_seat</span>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">المقاعد والحجز</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">عدد المقاعد</label>
-              <input required type="number" min="1" placeholder="مثال: 25" className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5" />
-              <p className="text-xs text-slate-400 mt-1">(أقصى عدد طلاب مسموح به في القاعة)</p>
+        <div className="p-10 border-b border-slate-50 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-orange-500/10 text-orange-600 rounded-2xl flex items-center justify-center">
+                <span className="material-symbols-outlined font-light">airline_seat_recline_normal</span>
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">السعة والحالة</h3>
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">حالة الحجز</label>
-              <select className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary outline-none px-4 py-2.5">
-                <option>متاح للحجز</option>
-                <option>مغلق مؤقتًا</option>
-              </select>
-              <p className="text-xs text-slate-400 mt-1">(تحكم في ظهور المجموعة للطلاب على صفحة الحجز)</p>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">الخطوة 3 من 3</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">إجمالي المقاعد المتاحة</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-primary transition-colors">event_seat</span>
+                <input
+                  required
+                  type="number"
+                  min="1"
+                  value={seats}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === '' || (parseInt(val) >= 0 && !val.includes('.'))) {
+                      setSeats(val);
+                    }
+                  }}
+                  placeholder="مثال: 30"
+                  className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl pr-14 pl-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">حالة التسجيل</label>
+              <div className="relative">
+                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-slate-700 dark:text-slate-200 appearance-none">
+                  <option value="نشط">متاح للحجز الآن</option>
+                  <option value="مغلق">مغلق مؤقتاً (للمعاينة فقط)</option>
+                </select>
+                <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Section 4: Notes */}
-        <div className="p-6 md:p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary">notes</span>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">ملاحظات إضافية</h3>
+        <div className="p-10">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center">
+              <span className="material-symbols-outlined font-light">description</span>
+            </div>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">وصف المجموعة</h3>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">أي تعليمات أو ملاحظات إضافية للطلاب</label>
-            <textarea rows={4} placeholder="اكتب الملاحظات هنا..." className="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary resize-none outline-none px-4 py-2.5"></textarea>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block pr-2">توجيهات للطلاب (اختياري)</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={4} placeholder="اكتب شروط الحجز أو أي تعليمات إضافية هنا..." className="w-full bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-[2rem] px-8 py-6 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-slate-700 dark:text-slate-200 leading-relaxed resize-none"></textarea>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="p-6 md:p-8 bg-slate-50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-end gap-4">
-          <Link href="/dashboard/groups" className="w-full sm:w-auto px-8 py-3 text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-colors text-center">
-            إلغاء
+        <div className="p-10 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-end gap-6">
+          <Link href="/dashboard/groups" className="w-full sm:w-auto px-10 py-5 text-slate-400 hover:text-slate-900 dark:hover:text-white font-black text-sm uppercase tracking-widest transition-all text-center">
+            إلغاء العملية
           </Link>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting}
-            className={`w-full sm:w-auto px-10 py-3 bg-primary text-white font-bold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`w-full sm:w-auto px-12 py-5 bg-primary text-white font-black rounded-2xl shadow-[0_20px_40px_rgba(60,131,246,0.25)] hover:bg-primary-hover transition-all flex items-center justify-center gap-3 active:scale-95 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {isSubmitting ? (
-              <span className="material-symbols-outlined text-xl animate-spin">sync</span>
+              <span className="material-symbols-outlined text-2xl animate-spin">sync</span>
             ) : (
-              <span className="material-symbols-outlined text-xl">add_circle</span>
+              <span className="material-symbols-outlined text-2xl">add_box</span>
             )}
-            <span>إنشاء المجموعة</span>
+            <span>تأكيد وإنشاء المجموعة</span>
           </button>
         </div>
       </form>
 
-      {/* Toast */}
-      <div className={`fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-white dark:bg-slate-900 border-l-4 border-emerald-500 text-slate-800 dark:text-white px-6 py-4 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] transform transition-all duration-500 ${showToast ? 'translate-y-0 opacity-100' : '-translate-y-32 opacity-0 pointer-events-none'}`}>
-        <div className="flex-shrink-0 w-10 h-10 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-          <span className="material-symbols-outlined text-2xl">check_circle</span>
+      {/* Floating Success Toast */}
+      <div className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-6 transition-all duration-700 ${showToast ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-32 opacity-0 scale-90 pointer-events-none'}`}>
+        <div className="bg-white dark:bg-slate-900 border-2 border-emerald-500/20 rounded-[2.5rem] shadow-[0_40px_80px_rgba(16,185,129,0.15)] backdrop-blur-xl p-8 flex items-center gap-8">
+          <div className="w-16 h-16 bg-emerald-500 text-white rounded-[1.5rem] flex items-center justify-center shadow-lg shadow-emerald-500/30 shrink-0">
+            <span className="material-symbols-outlined text-4xl">check_circle</span>
+          </div>
+          <div className="flex-1">
+            <h4 className="text-xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">تمت العملية بنجاح!</h4>
+            <p className="text-slate-500 dark:text-slate-400 font-bold text-sm leading-relaxed">تم إنشاء المجموعة بنجاح وجاري تحويلك للرئيسية.</p>
+          </div>
+          <button onClick={() => setShowToast(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-900 transition-all">
+            <span className="material-symbols-outlined">close</span>
+          </button>
         </div>
-        <div className="flex-grow">
-          <p className="font-bold text-base">تمت العملية بنجاح</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400">تم إنشاء المجموعة بنجاح! يمكن للطلاب الآن البدء في الحجز عبر نظام جدولي.</p>
-        </div>
-        <button onClick={() => setShowToast(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-          <span className="material-symbols-outlined text-xl">close</span>
-        </button>
       </div>
     </div>
   );

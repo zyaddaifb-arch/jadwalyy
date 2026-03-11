@@ -1,195 +1,166 @@
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { DashboardHeader } from '@/components/dashboard/dashboard-header';
+import { StatsCard } from '@/components/dashboard/stats-card';
 
-export default function GroupsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function GroupsPage() {
+  const supabase = await createClient();
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    redirect('/login');
+  }
+
+  // Fetch groups for the teacher
+  const { data: groups, error: groupsError } = await supabase
+    .from('groups')
+    .select('*')
+    .eq('teacher_id', user.id)
+    .order('created_at', { ascending: false });
+
+  if (groupsError) {
+    console.error('Error fetching groups:', groupsError);
+  }
+
+  const validGroups = groups || [];
+
+  // Calculate dynamic stats
+  const totalGroups = validGroups.length;
+  const availableGroups = validGroups.filter(g => (g.seats_total - g.seats_reserved) > 0).length;
+  const completedGroups = validGroups.filter(g => (g.seats_total - g.seats_reserved) <= 0).length;
+  const totalReservedSeats = validGroups.reduce((acc, curr) => acc + curr.seats_reserved, 0);
+
   return (
     <div className="p-10 pb-20">
-      <header className="flex flex-wrap justify-between items-start gap-6 mb-10">
-        <div className="max-w-3xl">
-          <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-3">إدارة المجموعات</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">تتبع الجلسات الدراسية، مستويات الإشغال، وإحصائيات الحجز المباشرة بمنظور شامل.</p>
-        </div>
-        <Link href="/dashboard/groups/create" className="sticky top-8 z-40 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined text-2xl transition-transform">add_circle</span>
-          <span className="text-lg">إنشاء مجموعة</span>
+      <DashboardHeader
+        title="إدارة المجموعات"
+        description="تتبع الجلسات الدراسية، مستويات الإشغال، وإحصائيات الحجز المباشرة."
+      >
+        <Link href="/dashboard/groups/create" className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-primary/20 transition-all flex items-center gap-3 active:scale-95 whitespace-nowrap">
+          <span className="material-symbols-outlined font-black text-2xl">add_circle</span>
+          <span>إنشاء مجموعة جديدة</span>
         </Link>
-      </header>
+      </DashboardHeader>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-primary/30 transition-all group">
-          <div className="flex items-center gap-5">
-            <div className="size-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-3xl">layers</span>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-0.5">إجمالي المجموعات</p>
-              <h4 className="text-2xl font-black dark:text-white">١٢</h4>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-green-500/30 transition-all group">
-          <div className="flex items-center gap-5">
-            <div className="size-14 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-3xl">event_available</span>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-0.5">المجموعات المتاحة</p>
-              <h4 className="text-2xl font-black dark:text-white">٨</h4>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-orange-500/30 transition-all group">
-          <div className="flex items-center gap-5">
-            <div className="size-14 rounded-2xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-3xl">fact_check</span>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-0.5">المجموعات المكتملة</p>
-              <h4 className="text-2xl font-black dark:text-white">٤</h4>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-purple-500/30 transition-all group">
-          <div className="flex items-center gap-5">
-            <div className="size-14 rounded-2xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-3xl">airline_seat_recline_extra</span>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-bold mb-0.5">إجمالي المقاعد المحجوزة</p>
-              <h4 className="text-2xl font-black dark:text-white">٤٩</h4>
-            </div>
-          </div>
-        </div>
+      {/* Stats Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <StatsCard
+          label="إجمالي المجموعات"
+          value={totalGroups}
+          icon="layers"
+          color="blue"
+        />
+        <StatsCard
+          label="مجموعات متاحة"
+          value={availableGroups}
+          icon="event_available"
+          color="emerald"
+        />
+        <StatsCard
+          label="مجموعات مكتملة"
+          value={completedGroups}
+          icon="task_alt"
+          color="orange"
+        />
+        <StatsCard
+          label="إجمالي المحجوز"
+          value={totalReservedSeats}
+          icon="how_to_reg"
+          color="purple"
+        />
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 mb-8 shadow-sm border border-slate-200 dark:border-slate-800">
-        <div className="flex flex-col lg:flex-row gap-6 items-center">
-          <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-full gap-1 w-full lg:w-auto overflow-x-auto">
-            <button className="px-8 py-2.5 text-sm font-bold bg-white dark:bg-slate-700 text-primary shadow-sm rounded-full whitespace-nowrap transition-all ring-1 ring-slate-200/50 dark:ring-slate-600">كل المجموعات</button>
-            <button className="px-8 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white whitespace-nowrap transition-all rounded-full">المتاحة</button>
-            <button className="px-8 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white whitespace-nowrap transition-all rounded-full">المكتملة</button>
-          </div>
-          <div className="relative flex-1 w-full">
-            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-            <input 
-              type="text" 
-              placeholder="ابحث بسرعة عن مجموعة، مادة، أو تاريخ..." 
-              className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl pr-12 pl-4 py-3.5 focus:ring-4 focus:ring-primary/10 transition-all text-slate-700 dark:text-slate-200 placeholder:text-slate-400 outline-none"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
-                <th className="px-8 py-5 text-sm font-bold uppercase tracking-wider">اسم المجموعة</th>
-                <th className="px-6 py-5 text-sm font-bold uppercase tracking-wider">المادة</th>
-                <th className="px-6 py-5 text-sm font-bold uppercase tracking-wider">التاريخ</th>
-                <th className="px-6 py-5 text-sm font-bold uppercase tracking-wider">الوقت</th>
-                <th className="px-6 py-5 text-sm font-bold uppercase tracking-wider">المقاعد</th>
-                <th className="px-6 py-5 text-sm font-bold uppercase tracking-wider">الحالة</th>
-                <th className="px-8 py-5 text-sm font-bold uppercase tracking-wider text-center">الإجراء</th>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">المجموعة</th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">المادة</th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest text-center">الإشغال</th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">الموعد</th>
+                <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest text-left">الإجراءات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              <tr className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
-                <td className="px-8 py-6">
-                  <div className="flex items-center gap-4">
-                    <div className="size-10 flex items-center justify-center shrink-0 text-slate-400">
-                      <span className="material-symbols-outlined text-2xl">science</span>
+            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+              {validGroups.length > 0 ? (
+                validGroups.map((group: any) => {
+                  const percent = Math.min(100, Math.round((group.seats_reserved / group.seats_total) * 100)) || 0;
+                  const isFull = group.seats_reserved >= group.seats_total;
+                  return (
+                    <tr key={group.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner border border-primary/10">
+                            <span className="material-symbols-outlined text-2xl font-light">category</span>
+                          </div>
+                          <div>
+                            <p className="font-black text-slate-900 dark:text-white leading-tight mb-1">{group.name}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">معرف: {group.id.split('-')[0].toUpperCase()}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <span className="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-black rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-widest">
+                          {group.subject}
+                        </span>
+                      </td>
+                      <td className="px-8 py-6 max-w-[200px]">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-tighter">
+                            <span className="text-slate-400">سعة الحجز</span>
+                            <span className={isFull ? 'text-red-600' : 'text-primary'}>{group.seats_reserved} / {group.seats_total}</span>
+                          </div>
+                          <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner border border-slate-200/30 dark:border-slate-700/30">
+                            <div className={`h-full rounded-full transition-all duration-1000 ${isFull ? 'bg-red-500' : 'bg-primary'}`} style={{ width: `${percent}%` }}></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-2 text-sm font-black text-slate-700 dark:text-slate-300">
+                          <span className="material-symbols-outlined text-primary text-xl font-light">schedule</span>
+                          <span>{group.time}</span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6 text-left">
+                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                          <Link href={`/${user.id}/${group.id}`} target="_blank" className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-primary border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-110 active:scale-90" title="معاينة الصفحة العامة">
+                            <span className="material-symbols-outlined text-xl">open_in_new</span>
+                          </Link>
+                          <Link href={`/dashboard/groups/${group.id}`} className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-primary border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-110 active:scale-90" title="تعديل المجموعة">
+                            <span className="material-symbols-outlined text-xl">edit</span>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-8 py-32 text-center bg-white dark:bg-slate-900">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center mb-8 rotate-12 group-hover:rotate-0 transition-transform">
+                        <span className="material-symbols-outlined text-6xl text-slate-200 font-light">layers</span>
+                      </div>
+                      <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">ابدأ بإنشاء أول مجموعة لك</h3>
+                      <p className="text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto leading-relaxed text-lg mb-8">قم بإنشاء مجموعات دراسية وتحديد مواعيدها لتبدأ في استقبال طلبات الحجز من الطلاب.</p>
+                      <Link
+                        href="/dashboard/groups/create"
+                        className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-primary/20 transition-all flex items-center gap-3 active:scale-95"
+                      >
+                        <span className="material-symbols-outlined font-black">add_circle</span>
+                        <span>إنشاء مجموعة الآن</span>
+                      </Link>
                     </div>
-                    <span className="font-bold text-lg text-slate-900 dark:text-white">مجموعة التفوق</span>
-                  </div>
-                </td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400 font-medium">الفيزياء</td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400">الأربعاء، ٢٥ أكتوبر</td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400">٤:٠٠ م</td>
-                <td className="px-6 py-6">
-                  <div className="flex flex-col gap-2 w-40">
-                    <div className="flex justify-between text-xs font-bold text-slate-500">
-                      <span>١٢ محجوز</span>
-                      <span>٨ متبقي</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                      <div className="bg-primary h-full rounded-full" style={{ width: '60%' }}></div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-6">
-                  <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 border border-green-200 dark:border-green-800">متاح للحجز</span>
-                </td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center justify-center gap-3">
-                    <Link href="/dashboard/groups/1" className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg transition-all font-bold text-xs whitespace-nowrap bg-primary text-white hover:bg-blue-600 shadow-sm">
-                      <span className="material-symbols-outlined text-lg">visibility</span>
-                      عرض التفاصيل
-                    </Link>
-                    <button className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
-                      <span className="material-symbols-outlined text-2xl">more_vert</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
-                <td className="px-8 py-6">
-                  <div className="flex items-center gap-4">
-                    <div className="size-10 flex items-center justify-center shrink-0 text-slate-400">
-                      <span className="material-symbols-outlined text-2xl">calculate</span>
-                    </div>
-                    <span className="font-bold text-lg text-slate-900 dark:text-white">نخبة الرياضيات</span>
-                  </div>
-                </td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400 font-medium">الرياضيات</td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400">الخميس، ٢٦ أكتوبر</td>
-                <td className="px-6 py-6 text-slate-600 dark:text-slate-400">٢:٠٠ م</td>
-                <td className="px-6 py-6">
-                  <div className="flex flex-col gap-2 w-40">
-                    <div className="flex justify-between text-xs font-bold text-slate-500">
-                      <span>١٥ محجوز</span>
-                      <span>٠ متبقي</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                      <div className="bg-red-500 h-full rounded-full" style={{ width: '100%' }}></div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-6">
-                  <span className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400 border border-orange-200 dark:border-orange-800">مكتمل</span>
-                </td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center justify-center gap-3">
-                    <Link href="/dashboard/groups/2" className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg transition-all font-bold text-xs whitespace-nowrap bg-primary text-white hover:bg-blue-600 shadow-sm">
-                      <span className="material-symbols-outlined text-lg">visibility</span>
-                      عرض التفاصيل
-                    </Link>
-                    <button className="p-2.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
-                      <span className="material-symbols-outlined text-2xl">more_vert</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-        </div>
-        <div className="px-8 py-5 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-slate-500">عرض <span className="font-bold text-slate-900 dark:text-white">١-٢</span> من أصل <span className="font-bold text-slate-900 dark:text-white">١٢</span> مجموعة</span>
-          </div>
-          <div className="flex gap-3">
-            <button className="flex items-center justify-center size-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 hover:border-primary/50 text-slate-500 hover:text-primary transition-all">
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-            <div className="flex items-center gap-1">
-              <button className="size-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold text-sm">١</button>
-              <button className="size-10 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-sm">٢</button>
-              <button className="size-10 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-sm">٣</button>
-            </div>
-            <button className="flex items-center justify-center size-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 hover:border-primary/50 text-slate-500 hover:text-primary transition-all">
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

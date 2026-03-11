@@ -27,27 +27,27 @@ export function Hero() {
                 <span>ابدأ مجانًا الآن</span>
                 <span className="material-symbols-outlined">arrow_back</span>
               </Link>
-              <button className="bg-white dark:bg-navy-800 text-slate-900 dark:text-white border border-slate-200 dark:border-navy-700 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:bg-slate-50 dark:hover:bg-navy-700 flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="bg-white dark:bg-navy-800 text-slate-900 dark:text-white border border-slate-200 dark:border-navy-700 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:bg-slate-50 dark:hover:bg-navy-700 flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined">play_circle</span>
                 <span>شاهد كيف يعمل</span>
-              </button>
+              </a>
             </div>
             <div className="mt-10 flex items-center justify-center lg:justify-start gap-4">
               <div className="flex -space-x-2 space-x-reverse">
                 <div className="w-10 h-10 rounded-full border-2 border-white dark:border-navy-900 bg-slate-300 overflow-hidden relative">
-                  <Image fill alt="Student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSNRU7GkfWmPV2GGKDVB__g6B0Ohx9A22S7x5e0t-rTg7Zo-hG-xCbG1XbwKkGDCF5JalSGqRl2W7foaerDPtoZP6rquumlL-8uLWgwzxEAJyZYvh2SPNcWP9fxRD_Rnqz3TQgyoSBmbvk0-JcTHFuCpHSCAxoI-vAUMwN-xZ5qGPwXHfbJ2lPS5OUF4KRdC3ajpl6p7011rNUjQ_NqzKvC4aONhXNFRw0JaPs-31ho7LU1mKCJNXrGV9SghpFX1_X6figS-OdFaY" referrerPolicy="no-referrer" />
+                  <Image fill alt="معلم" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSNRU7GkfWmPV2GGKDVB__g6B0Ohx9A22S7x5e0t-rTg7Zo-hG-xCbG1XbwKkGDCF5JalSGqRl2W7foaerDPtoZP6rquumlL-8uLWgwzxEAJyZYvh2SPNcWP9fxRD_Rnqz3TQgyoSBmbvk0-JcTHFuCpHSCAxoI-vAUMwN-xZ5qGPwXHfbJ2lPS5OUF4KRdC3ajpl6p7011rNUjQ_NqzKvC4aONhXNFRw0JaPs-31ho7LU1mKCJNXrGV9SghpFX1_X6figS-OdFaY" referrerPolicy="no-referrer" />
                 </div>
                 <div className="w-10 h-10 rounded-full border-2 border-white dark:border-navy-900 bg-slate-400 overflow-hidden relative">
-                  <Image fill alt="Student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp4fIOTsGJMteva4ClmlbBp2HZiINW2AiJ_JxCdC0Gop6ypdKz8X_giNroh57C0dt1MIVUOqwSDasRJ33edTkOX7iOh17ae87Spm3GNQCJKcC-5OJVvOJ59Tllu1xQzA7h_7cniU1F6KTJ4tm3WI9Mbn_AtzxO4hf1GIIiD7t8Qk6WlDu2M6A4L397acgV0KkA81-OLT40SCGlKZLyjbkWHaO6gK6PPjGlqRmQe0jZaEmyC9bWBDFDgUz5nnGZQjCPn67QObtS1rY" referrerPolicy="no-referrer" />
+                  <Image fill alt="معلمة" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp4fIOTsGJMteva4ClmlbBp2HZiINW2AiJ_JxCdC0Gop6ypdKz8X_giNroh57C0dt1MIVUOqwSDasRJ33edTkOX7iOh17ae87Spm3GNQCJKcC-5OJVvOJ59Tllu1xQzA7h_7cniU1F6KTJ4tm3WI9Mbn_AtzxO4hf1GIIiD7t8Qk6WlDu2M6A4L397acgV0KkA81-OLT40SCGlKZLyjbkWHaO6gK6PPjGlqRmQe0jZaEmyC9bWBDFDgUz5nnGZQjCPn67QObtS1rY" referrerPolicy="no-referrer" />
                 </div>
                 <div className="w-10 h-10 rounded-full border-2 border-white dark:border-navy-900 bg-slate-500 overflow-hidden relative">
-                  <Image fill alt="Student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl7asa8kH3ufr2ixVTtUaPTxN4hdrMvHqOem63NDdviQs2PJwmhf7g-CPSyBWFoevM9bUlLyADHyH8wECfucpFfD_CeVtINu_D960rTkIzYUmv2OMg-M64heuchfQPLAnbOAWBPBOJYlJBIvarKsVpIgDgIETkT8q6x70505ETRyUloGSpOcPecJuVfkLUBGKEj2E3CjXHNbQfln0L0HoP5QDn6jHCJHuTMNFc4Xj0rM_pvpKvQTX4bR9wAgg1c9i7pqRxisoLsUM" referrerPolicy="no-referrer" />
+                  <Image fill alt="معلم" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl7asa8kH3ufr2ixVTtUaPTxN4hdrMvHqOem63NDdviQs2PJwmhf7g-CPSyBWFoevM9bUlLyADHyH8wECfucpFfD_CeVtINu_D960rTkIzYUmv2OMg-M64heuchfQPLAnbOAWBPBOJYlJBIvarKsVpIgDgIETkT8q6x70505ETRyUloGSpOcPecJuVfkLUBGKEj2E3CjXHNbQfln0L0HoP5QDn6jHCJHuTMNFc4Xj0rM_pvpKvQTX4bR9wAgg1c9i7pqRxisoLsUM" referrerPolicy="no-referrer" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400">انضم إلى <span className="text-slate-900 dark:text-white font-bold">+5,000</span> مدرس وطالب يستخدمون المنصة</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">انضم إلى <span className="text-slate-900 dark:text-white font-bold">+5,000</span> مدرس يستخدمون المنصة</p>
             </div>
           </div>
-          {/* Mockup */}
+          {/* Mockup / Screenshot */}
           <div className="flex-1 w-full max-w-2xl">
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-600 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
@@ -56,6 +56,7 @@ export function Hero() {
                   <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                  <span className="mr-2 text-[10px] text-slate-400 font-medium">jadwalyy.app/dashboard</span>
                 </div>
                 <div className="p-4 sm:p-8 space-y-6 h-full bg-gradient-to-br from-white to-slate-50 dark:from-navy-800 dark:to-navy-900">
                   {/* Dashboard Mockup Inner */}
